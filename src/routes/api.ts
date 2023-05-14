@@ -28,7 +28,8 @@ router.post('/fetch', async (req, res, _next) => {
   // Unset the connection header to prevent errors
   delete headersToForward.connection;
 
-  console.log('headersToForward', headersToForward);
+  // Unset the keep-alive header to prevent errors
+  delete headersToForward['keep-alive'];
 
   const globalHeaders = {
     ...headersToForward,

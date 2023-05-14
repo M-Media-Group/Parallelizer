@@ -82,9 +82,9 @@ export default class ParallelApiCalls<T> {
         let totalErrors = 0;
 
         // Discard any failed requests.
-        const successfulResponses = responses.map((response) => {
+        const successfulResponses = responses.filter((response) => {
             totalErrors += response.request.errors.length;
-            return response;
+            return response.data;
         });
 
         console.timeEnd('fetching-data');
