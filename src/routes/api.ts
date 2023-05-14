@@ -34,17 +34,24 @@ router.post('/fetch', async (req, res, _next) => {
     return;
   }
 
+  const applyTransformations = (transformations: any, incomingData: any) => transformations.map((transform: any) => {
+    return { [transform.key]: transform.value ?? dotNotationParser(incomingData, transform.valueKey) };
+  })
+    .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
+
+  const applyAnyTransformation = (hotel: any) => {
+    if (hotel.transform || globalTransform) {
+      // Data here will come from the API response when the ApiEndpoint calls. This here is the callback function.
+      return (data: any) => applyTransformations(hotel.transform ?? globalTransform, data);
+    }
+    return undefined;
+  }
+
   const apiEndpoints = incomingData.map(
     (hotel: any) => (new ApiEndpoint(
       hotel.url,
       hotel.successKey ?? globalSuccessKey,
-      hotel.transform ? (data: any) => hotel.transform.map((transform: any) => {
-        return { [transform.key]: transform.value ?? dotNotationParser(data, transform.valueKey) };
-      })
-        .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {}) : globalTransform ? (data: any) => globalTransform.map((transform: any) => {
-          return { [transform.key]: transform.value ?? dotNotationParser(data, transform.valueKey) };
-        })
-          .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {}) : undefined,
+      applyAnyTransformation(hotel),
       hotel.headers ?? globalHeaders,
       undefined,
       hotel.method ?? globalMethod,
@@ -53,16 +60,17 @@ router.post('/fetch', async (req, res, _next) => {
   );
 
   const pac = new ParallelApiCalls(
-    apiEndpoints.slice(0, 100)
+    apiEndpoints.slice(0, 2)
   );
+
   try {
     await pac.run();
   } catch (error: any) {
     res.send({ error: error.message });
   }
 
-
   res.send(req.body.detailedResponse ? pac.getResults() : pac.getOnlyResultsData());
+
   console.timeEnd('parallel');
 });
 
