@@ -64,19 +64,22 @@ router.post('/fetch', async (req, res, _next) => {
     return undefined;
   }
 
+  const buildApiEndpointFromRequest = (requestEndpoint: any) =>
+    new ApiEndpoint(
+      requestEndpoint.url,
+      requestEndpoint.successKey ?? globalSuccessKey,
+      applyAnyTransformation(requestEndpoint),
+      requestEndpoint.headers ?? globalHeaders,
+      undefined, // This is the callback function, which is not needed here since we use the default one. Overriding it on the API level would be hard to implement.
+      requestEndpoint.method ?? globalMethod,
+      requestEndpoint.body ?? globalBody,
+      requestEndpoint.maxExecutionTime ?? globalMaxExecutionTime,
+      requestEndpoint.maxRetries ?? globalMaxRetries,
+      requestEndpoint.delay ?? globalDelay,
+    );
+
   const apiEndpoints = incomingData.map(
-    (hotel: any) => (new ApiEndpoint(
-      hotel.url,
-      hotel.successKey ?? globalSuccessKey,
-      applyAnyTransformation(hotel),
-      hotel.headers ?? globalHeaders,
-      undefined,
-      hotel.method ?? globalMethod,
-      hotel.body ?? globalBody,
-      hotel.maxExecutionTime ?? globalMaxExecutionTime,
-      hotel.maxRetries ?? globalMaxRetries,
-      hotel.delay ?? globalDelay,
-    ))
+    (requestEndpoint: any) => buildApiEndpointFromRequest(requestEndpoint)
   );
 
   const pac = new ParallelApiCalls(
