@@ -1,4 +1,4 @@
-# API
+# Parallelizer API
 
 Call multiple APIs in parallel, transform and unify the results, and return them in a single response!
 
@@ -100,9 +100,3 @@ Each object in `transform` should contain the following fields:
 - value or valueKey: The new value to set for the key in the response data. Use value if the value should not be transformed (what you put in is what you get back), or use valueKey if the value should be transformed (what you put in value is a key from the API response).
 
 Note: if the transformation fails, it will fail silently and simply not transform the endpoint's data, instead, it will return the original response data.
-
-The response will be a JSON object containing an array of objects, one for each endpoint specified in the request body. Each object will contain the following fields:
-
-type: A string representing the type of data returned by the endpoint ("joke" or "fact").
-text: A string representing the text data returned by the endpoint.
-

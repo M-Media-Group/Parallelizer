@@ -8,12 +8,46 @@ a {
   color: #00B7FF;
 }
 
+
+h2 {
+  margin-top: 48px;
+}
+
+h3 {
+  margin-top: 24px;
+}
+
+h4 {
+  margin-top: 16px;
+}
+
+h5 {
+  margin-top: 8px;
+}
+
 table,
 pre {
   display: block;
   overflow-x: auto;
+  white-space: pre-wrap;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  padding: 16px;
 }
 
-td {
-  min-width: 15ch;
+table {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  margin: 16px 0;
+  width: 100%;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Cell padding left and right */
+td,
+th {
+  padding: 8px;
 }
