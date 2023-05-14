@@ -196,8 +196,6 @@ export default class ApiEndpoint {
             return this.getResultResponse();
         }
 
-        console.log("Run transform with");
-
         this.transformationStartTime = Date.now();
         try {
             this.result = await this.transform(this.result);
