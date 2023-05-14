@@ -66,7 +66,7 @@ router.post('/fetch', async (req, res, _next) => {
   );
 
   const pac = new ParallelApiCalls(
-    apiEndpoints.slice(0, 2)
+    apiEndpoints.slice(0, 250)
   );
 
   try {
