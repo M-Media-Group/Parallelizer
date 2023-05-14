@@ -22,6 +22,14 @@ router.post('/fetch', async (req, res, _next) => {
   // Unset the content-length header to prevent errors
   delete headersToForward['content-length'];
 
+  // Unset the accept-encoding header to prevent errors
+  delete headersToForward['accept-encoding'];
+
+  // Unset the connection header to prevent errors
+  delete headersToForward.connection;
+
+  console.log('headersToForward', headersToForward);
+
   const globalHeaders = {
     ...headersToForward,
     ...req.body.headers,
