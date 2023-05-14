@@ -14,7 +14,21 @@ router.post('/fetch', async (req, res, _next) => {
   const incomingData = req.body.endpoints;
   const globalSuccessKey = req.body.successKey;
   const globalTransform = req.body.transform;
-  const globalHeaders = req.body.headers;
+
+  const headersToForward = req.headers;
+  // Unset the host header to prevent CORS errors
+  delete headersToForward.host;
+
+  // Unset the content-length header to prevent errors
+  delete headersToForward['content-length'];
+
+  const globalHeaders = {
+    ...headersToForward,
+    ...req.body.headers,
+    accept: 'application/json',
+    'content-type': 'application/json',
+  };
+
   const globalMethod = req.body.method;
   const globalBody = req.body.body;
   const globalMaxExecutionTime = Number(req.body.maxExecutionTime);
