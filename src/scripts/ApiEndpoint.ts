@@ -26,26 +26,27 @@ export interface ApiEndpointResponse {
 }
 
 export default class ApiEndpoint {
-    url: string;
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET';
-    body = null as any;
     private fetchAttempts = 0;
     private result = null as any;
     private errors = [] as ApiEndpointError[];
+    private fetchedFromCache = false;
+    private hasBeenTransformed = false;
+    private executionStartTime = 0;
+    private executionEndTime = 0;
+    private transformationStartTime = 0;
+    private transformationEndTime = 0;
+
+    url: string;
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET';
+    body = null as any;
     successKey = 'isComplete';
     delay = 200;
     maxRetries = 5;
     headers = {};
     cacheTime = 60;
-    private fetchedFromCache = false;
     transform = null as null | CallableFunction;
-    private hasBeenTransformed = false;
     failCritically = false;
     maxExecutionTime = 8000 as null | number;
-    private executionStartTime = 0;
-    private executionEndTime = 0;
-    private transformationStartTime = 0;
-    private transformationEndTime = 0;
     callback: (tries: number) => any;
 
     constructor(
@@ -56,6 +57,9 @@ export default class ApiEndpoint {
         callback?: ApiEndpoint["callback"],
         method?: ApiEndpoint["method"],
         body?: ApiEndpoint["body"],
+        maxExecutionTime?: ApiEndpoint["maxExecutionTime"],
+        maxRetries?: ApiEndpoint["maxRetries"],
+        delay?: ApiEndpoint["delay"],
     ) {
         this.url = url;
         this.successKey = successKey || this.successKey;
@@ -63,6 +67,9 @@ export default class ApiEndpoint {
         this.headers = headers || this.headers;
         this.method = method || this.method;
         this.body = body || this.body;
+        this.maxExecutionTime = maxExecutionTime || this.maxExecutionTime;
+        this.maxRetries = maxRetries || this.maxRetries;
+        this.delay = delay || this.delay;
 
         this.callback = callback || this.defaultCallback;
     }
@@ -88,7 +95,7 @@ export default class ApiEndpoint {
 
     public validate() {
         if (!this.url || typeof this.url !== 'string' || !this.url.startsWith('http')) {
-            throw new Error('Invalid URL');
+            throw new Error('Invalid URL. URLs must start with http or https and be valid URLs');
         }
 
         if (!this.callback || typeof this.callback !== 'function') {
@@ -117,10 +124,12 @@ export default class ApiEndpoint {
 
         if (this.delay && this.delay > 60000) {
             throw new Error('Delay is too long');
+        } else if (this.delay && this.delay < 100) {
+            throw new Error('Delay is too short');
         }
 
         if (this.maxExecutionTime && this.maxExecutionTime < this.delay) {
-            throw new Error('Invalid maxExecutionTime');
+            throw new Error(`The maxExecutionTime cannot be smaller than the delay time, which is currently set to ${this.delay}ms`);
         }
     }
 

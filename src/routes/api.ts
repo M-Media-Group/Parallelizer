@@ -17,6 +17,9 @@ router.post('/fetch', async (req, res, _next) => {
   const globalHeaders = req.body.headers;
   const globalMethod = req.body.method;
   const globalBody = req.body.body;
+  const globalMaxExecutionTime = Number(req.body.maxExecutionTime);
+  const globalMaxRetries = Number(req.body.maxRetries);
+  const globalDelay = Number(req.body.delay);
 
   // Validate incoming data
   if (!Array.isArray(incomingData)) {
@@ -56,6 +59,9 @@ router.post('/fetch', async (req, res, _next) => {
       undefined,
       hotel.method ?? globalMethod,
       hotel.body ?? globalBody,
+      hotel.maxExecutionTime ?? globalMaxExecutionTime,
+      hotel.maxRetries ?? globalMaxRetries,
+      hotel.delay ?? globalDelay,
     ))
   );
 
@@ -65,13 +71,13 @@ router.post('/fetch', async (req, res, _next) => {
 
   try {
     await pac.run();
+    res.send(req.body.detailedResponse ? pac.getResults() : pac.getOnlyResultsData());
   } catch (error: any) {
     res.send({ error: error.message });
+  } finally {
+    console.timeEnd('parallel');
+
   }
-
-  res.send(req.body.detailedResponse ? pac.getResults() : pac.getOnlyResultsData());
-
-  console.timeEnd('parallel');
 });
 
 export default router;

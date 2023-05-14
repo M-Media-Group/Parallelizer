@@ -70,6 +70,9 @@ This endpoint is used to retrieve data from multiple endpoints by sending a POST
 | `headers` | object | No | An object of additional headers to pass in the request. |
 | `method` | string | No | The HTTP method to use for the request. Defaults to `GET`. |
 | `body` | object | No | The body to send with the request. |
+| `maxExecutionTime` | number | No | The maximum time any single request should take or fail in miliseconds. |
+| `maxRetries` | number | No | The amount of times a request should be retried until it is considered as failed. |
+| `delay` | number | No | The time in miliseconds to wait between retries. |
 | `transform` | array | No | An array of objects representing the transformations to apply to the response data. |
 
 Each object in `endpoints` should contain the following fields (fields here override the global fields defined in the request body):
@@ -81,6 +84,9 @@ Each object in `endpoints` should contain the following fields (fields here over
 | `headers` | object | No | An object of additional headers to pass in the request. |
 | `method` | string | No | The HTTP method to use for the request. Defaults to `GET`. |
 | `body` | object | No | The body to send with the request. |
+| `maxExecutionTime` | number | No | The maximum time any single request should take or fail in miliseconds. |
+| `maxRetries` | number | No | The amount of times a request should be retried until it is considered as failed. |
+| `delay` | number | No | The time in miliseconds to wait between retries. |
 | `transform` | array | No | An array of objects representing the transformations to apply to the response data. |
 
 Each object in `transform` should contain the following fields:
