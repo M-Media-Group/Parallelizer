@@ -17,19 +17,11 @@ router.post('/fetch', async (req, res, _next) => {
 
   // Using a spread here allows us to create a copy rather than a reference, so when we delete stuff later, it doesnt affect the original req.headers
   const headersToForward = { ...req.headers };
-  // Unset the host header to prevent CORS errors
+  // Unset the following headers to prevent errors
   delete headersToForward.host;
-
-  // Unset the content-length header to prevent errors
   delete headersToForward['content-length'];
-
-  // Unset the accept-encoding header to prevent errors
   delete headersToForward['accept-encoding'];
-
-  // Unset the connection header to prevent errors
   delete headersToForward.connection;
-
-  // Unset the keep-alive header to prevent errors
   delete headersToForward['keep-alive'];
 
   const globalHeaders = {
