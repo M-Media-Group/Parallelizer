@@ -131,6 +131,14 @@ export default class ApiEndpoint {
         if (this.maxExecutionTime && this.maxExecutionTime < this.delay) {
             throw new Error(`The maxExecutionTime cannot be smaller than the delay time, which is currently set to ${this.delay}ms`);
         }
+
+        if (this.maxRetries && typeof this.maxRetries !== 'number') {
+            throw new Error('Invalid maxRetries');
+        }
+
+        if (this.maxRetries && this.maxRetries > 10) {
+            throw new Error('maxRetries is too high');
+        }
     }
 
     public async call(): Promise<ApiEndpointResponse> {
