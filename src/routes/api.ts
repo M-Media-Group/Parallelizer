@@ -12,6 +12,11 @@ router.post('/fetch', async (req, res, _next) => {
   console.time('parallel');
 
   const incomingData = req.body.endpoints;
+  const globalSuccessKey = req.body.successKey;
+  const globalTransform = req.body.transform;
+  const globalHeaders = req.body.headers;
+  const globalMethod = req.body.method;
+  const globalBody = req.body.body;
 
   // Validate incoming data
   if (!Array.isArray(incomingData)) {
@@ -31,15 +36,19 @@ router.post('/fetch', async (req, res, _next) => {
 
   const apiEndpoints = incomingData.map(
     (hotel: any) => (new ApiEndpoint(
-      hotel.url, hotel.successKey,
+      hotel.url,
+      hotel.successKey ?? globalSuccessKey,
       hotel.transform ? (data: any) => hotel.transform.map((transform: any) => {
         return { [transform.key]: transform.value ?? dotNotationParser(data, transform.valueKey) };
       })
-        .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {}) : undefined,
-      hotel.headers,
+        .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {}) : globalTransform ? (data: any) => globalTransform.map((transform: any) => {
+          return { [transform.key]: transform.value ?? dotNotationParser(data, transform.valueKey) };
+        })
+          .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {}) : undefined,
+      hotel.headers ?? globalHeaders,
       undefined,
-      hotel.method,
-      hotel.body,
+      hotel.method ?? globalMethod,
+      hotel.body ?? globalBody,
     ))
   );
 

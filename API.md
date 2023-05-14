@@ -66,13 +66,18 @@ This endpoint is used to retrieve data from multiple endpoints by sending a POST
 | --- | --- | --- | --- |
 | `detailedResponse` | boolean | No | A boolean representing whether or not the full response should be returned. If `true`, the transformed data will be in a `data` key, while information about the request (attempts, errors, and timings) will be in the `request` key. |
 | `endpoints` | array | Yes | An array of objects representing the endpoints to retrieve data from. |
+| `successKey` | string | Yes | The key in the response body that indicates a successful response. |
+| `headers` | object | No | An object of additional headers to pass in the request. |
+| `method` | string | No | The HTTP method to use for the request. Defaults to `GET`. |
+| `body` | object | No | The body to send with the request. |
+| `transform` | array | No | An array of objects representing the transformations to apply to the response data. |
 
-Each object in `endpoints` should contain the following fields:
+Each object in `endpoints` should contain the following fields (fields here override the global fields defined in the request body):
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `url` | string | Yes | The endpoint URL. |
-| `successKey` | string | Yes | The key in the response body that indicates a successful response. |
+| `successKey` | string | Yes (if not defined globally) | The key in the response body that indicates a successful response. |
 | `headers` | object | No | An object of additional headers to pass in the request. |
 | `method` | string | No | The HTTP method to use for the request. Defaults to `GET`. |
 | `body` | object | No | The body to send with the request. |
