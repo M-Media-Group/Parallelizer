@@ -41,7 +41,7 @@ export default class ApiEndpoint {
 
     url: string;
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET';
-    body = null as any;
+    body = null as null | object;
     successKey = 'isComplete';
     delay = 200;
     maxRetries = 5;
@@ -49,7 +49,7 @@ export default class ApiEndpoint {
     transform = null as null | CallableFunction;
     failCritically = false;
     maxExecutionTime = 8000 as null | number;
-    callback: (tries: number) => any;
+    callback: (tries: number) => Promise<any>;
 
     constructor(
         url: ApiEndpoint["url"],
@@ -248,7 +248,7 @@ export default class ApiEndpoint {
    * @param {number} maxRetries - The maximum number of retries before rejecting the promise
    * @returns {Promise<*>}
    */
-    private async continouslyCallCallbackUntilItCompletes(callback: (tries: number) => any) {
+    private async continouslyCallCallbackUntilItCompletes(callback: (tries: number) => any): Promise<any> {
         let tries = 0;
 
         const startTime = Date.now();
