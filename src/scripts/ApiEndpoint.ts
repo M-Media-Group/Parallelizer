@@ -1,5 +1,6 @@
 import fetchWithTimeout from "@/utils/fetcher";
 import sleep from "@/utils/sleep";
+import { IncomingHttpHeaders } from "http";
 
 interface ApiEndpointError {
     type: keyof typeof ApiEndpointErrorType;
@@ -36,13 +37,14 @@ export default class ApiEndpoint {
     private transformationStartTime = 0;
     private transformationEndTime = 0;
 
+    private headers = {} as IncomingHttpHeaders;
+
     url: string;
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET';
     body = null as any;
     successKey = 'isComplete';
     delay = 200;
     maxRetries = 5;
-    headers = {};
     cacheTime = 60;
     transform = null as null | CallableFunction;
     failCritically = false;
@@ -64,7 +66,7 @@ export default class ApiEndpoint {
         this.url = url;
         this.successKey = successKey || this.successKey;
         this.transform = transform || this.transform;
-        this.headers = headers || this.headers;
+        this.headers = headers ? this.setHeaders(headers) : this.headers;
         this.method = method || this.method;
         this.body = body || this.body;
         this.maxExecutionTime = maxExecutionTime || this.maxExecutionTime;
@@ -91,6 +93,17 @@ export default class ApiEndpoint {
                 }
                 return response;
             });
+    }
+
+    public setHeaders(headers: ApiEndpoint["headers"]) {
+        this.headers = headers;
+        // Unset the following headers to prevent errors
+        delete this.headers.host;
+        delete this.headers['content-length'];
+        delete this.headers['accept-encoding'];
+        delete this.headers.connection;
+        delete this.headers['keep-alive'];
+        return this.headers;
     }
 
     public validate() {

@@ -15,17 +15,8 @@ router.post('/fetch', async (req, res, _next) => {
   const globalSuccessKey = req.body.successKey;
   const globalTransform = req.body.transform;
 
-  // Using a spread here allows us to create a copy rather than a reference, so when we delete stuff later, it doesnt affect the original req.headers
-  const headersToForward = { ...req.headers };
-  // Unset the following headers to prevent errors
-  delete headersToForward.host;
-  delete headersToForward['content-length'];
-  delete headersToForward['accept-encoding'];
-  delete headersToForward.connection;
-  delete headersToForward['keep-alive'];
-
   const globalHeaders = {
-    ...headersToForward,
+    ...req.headers,
     ...req.body.headers,
     accept: 'application/json',
     'content-type': 'application/json',
