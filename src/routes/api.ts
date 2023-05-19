@@ -34,16 +34,22 @@ router.post('/fetch', async (req, res, _next) => {
   // Validate incoming data
   if (!Array.isArray(incomingEndpoints)) {
     res.status(422).send({ error: 'Invalid data' });
+    console.timeEnd('parallel');
+
     return;
   }
 
   if (incomingEndpoints.length === 0) {
     res.status(422).send({ error: 'No endpoints. You must specify at least one endpoint' });
+    console.timeEnd('parallel');
+
     return;
   }
 
   if (incomingEndpoints.length > API_ENDPOINTS_LIMIT) {
     res.status(422).send({ error: `Too many endpoints. Limited to ${API_ENDPOINTS_LIMIT} at a time, got ${incomingEndpoints.length}` });
+    console.timeEnd('parallel');
+
     return;
   }
 
@@ -90,7 +96,6 @@ router.post('/fetch', async (req, res, _next) => {
     res.send({ error: error.message });
   } finally {
     console.timeEnd('parallel');
-
   }
 });
 
