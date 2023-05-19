@@ -13,7 +13,7 @@ router.post('/fetch', async (req, res, _next) => {
   logger.info('respond with a resource');
   console.time('parallel');
 
-  const incomingData = req.body.endpoints;
+  const incomingEndpoints = req.body.endpoints;
   const globalSuccessKey = req.body.successKey;
   const globalTransform = req.body.transform;
 
@@ -31,18 +31,18 @@ router.post('/fetch', async (req, res, _next) => {
   const globalDelay = Number(req.body.delay);
 
   // Validate incoming data
-  if (!Array.isArray(incomingData)) {
+  if (!Array.isArray(incomingEndpoints)) {
     res.status(422).send({ error: 'Invalid data' });
     return;
   }
 
-  if (incomingData.length > API_ENDPOINTS_LIMIT) {
-    res.status(422).send({ error: `Too many endpoints. Limited to ${API_ENDPOINTS_LIMIT}, got ${incomingData.length}` });
+  if (incomingEndpoints.length === 0) {
+    res.status(422).send({ error: 'No endpoints. You must specify at least one endpoint' });
     return;
   }
 
-  if (incomingData.length === 0) {
-    res.status(422).send({ error: 'No endpoints' });
+  if (incomingEndpoints.length > API_ENDPOINTS_LIMIT) {
+    res.status(422).send({ error: `Too many endpoints. Limited to ${API_ENDPOINTS_LIMIT} at a time, got ${incomingEndpoints.length}` });
     return;
   }
 
@@ -73,7 +73,7 @@ router.post('/fetch', async (req, res, _next) => {
       requestEndpoint.delay ?? globalDelay,
     );
 
-  const apiEndpoints = incomingData.map(
+  const apiEndpoints = incomingEndpoints.map(
     (requestEndpoint: any) => buildApiEndpointFromRequest(requestEndpoint)
   );
 
