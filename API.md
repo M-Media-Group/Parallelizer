@@ -127,16 +127,16 @@ Endpoint groups are a way to group endpoints together and apply transformations 
             "successKey": "value",
             "endpoints": [
                 {
-                    "url": "https://api.chucknorris.io/jokes/random",
+                    "url": "https://api.chucknorris.io/jokes/random"
                 },
                 {
-                    "url": "https://api.chucknorris.io/jokes/random",
+                    "url": "https://api.chucknorris.io/jokes/random"
                 },
                 {
-                    "url": "https://api.chucknorris.io/jokes/random",
+                    "url": "https://api.chucknorris.io/jokes/random"
                 },
                 {
-                    "url": "https://api.chucknorris.io/jokes/random",
+                    "url": "https://api.chucknorris.io/jokes/random"
                 },
                 {
                     "url": "https://uselessfacts.jsph.pl/random.json?language=en",
@@ -168,13 +168,13 @@ Endpoint groups are a way to group endpoints together and apply transformations 
             "successKey": "text",
             "endpoints": [
                 {
-                    "url": "https://uselessfacts.jsph.pl/random.json?language=en",
+                    "url": "https://uselessfacts.jsph.pl/random.json?language=en"
                 },
                 {
-                    "url": "https://uselessfacts.jsph.pl/random.json?language=en",
+                    "url": "https://uselessfacts.jsph.pl/random.json?language=en"
                 },
                 {
-                    "url": "https://uselessfacts.jsph.pl/random.json?language=en",
+                    "url": "https://uselessfacts.jsph.pl/random.json?language=en"
                 }
             ]
         }
