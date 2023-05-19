@@ -14,7 +14,7 @@ enum ApiEndpointErrorType {
 }
 
 export interface ApiEndpointResponse {
-    data: any;
+    data: ApiEndpoint["result"];
     request: {
         url: ApiEndpoint["url"];
         attemots: ApiEndpoint["fetchAttempts"];

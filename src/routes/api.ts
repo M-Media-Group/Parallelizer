@@ -6,16 +6,25 @@ import dotNotationParser from '@/utils/dotNotationParser';
 const router = express.Router();
 const logger = getLogger('USER_ROUTE');
 
-const API_ENDPOINTS_LIMIT = 500;
+const API_ENDPOINTS_LIMIT = 250;
+
+interface ApiEndpointOptions extends Omit<ApiEndpointConstructorParams, "transform"> {
+  /** The transformation object that will be used in the transform method */
+  transform?: Record<"key" | "value" | "valueKey", string>[];
+}
+
+interface EndpointGroup extends ApiEndpointOptions {
+  endpoints: ApiEndpointOptions[];
+}
 
 /* POST users listing. */
 router.post('/fetch', async (req, res, _next) => {
   logger.info('respond with a resource');
   console.time('parallel');
 
-  const incomingEndpoints = req.body.endpoints;
-  const endpointGroups = req.body.endpointGroups;
-  const totalNumberOfEndpoints = endpointGroups?.reduce((acc: number, curr: any) => acc + curr.endpoints.length, 0);
+  const incomingEndpoints = req.body.endpoints as ApiEndpointOptions[] | undefined;
+  const endpointGroups = req.body.endpointGroups as EndpointGroup[] | undefined;
+  const totalNumberOfEndpoints = endpointGroups?.reduce((acc, curr) => acc + curr.endpoints.length, 0) ?? 0;
 
   if (totalNumberOfEndpoints === 0) {
     res.status(422).send({ error: 'No endpoints. You must specify at least one endpoint' });
@@ -29,12 +38,23 @@ router.post('/fetch', async (req, res, _next) => {
     return;
   }
 
-  const applyTransformations = (transformations: any[], incomingData: any) => transformations.map((transform: any) => {
+  /**
+   *
+   * @param transformations
+   * @param incomingData This data is the response from the API call. This is the data that will be transformed.
+   * @returns
+   */
+  const applyTransformations = (transformations: ApiEndpointOptions["transform"], incomingData: any) => transformations?.map((transform) => {
     return { [transform.key]: transform.value ?? dotNotationParser(incomingData, transform.valueKey) };
   })
-    .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
+    .reduce((acc, curr) => ({ ...acc, ...curr }), {})
 
-  const applyAnyTransformation = (transform: ApiEndpoint["transform"]) => {
+  /**
+   *
+   * @param transform The transformation object that will be used in the transform method
+   * @returns
+   */
+  const applyAnyTransformation = (transform: ApiEndpointOptions["transform"]) => {
     if (transform || req.body.transform) {
       // Data here will come from the API response when the ApiEndpoint calls. This here is the callback function.
       return (data: any) => applyTransformations(transform ?? req.body.transform, data);
@@ -42,7 +62,7 @@ router.post('/fetch', async (req, res, _next) => {
     return undefined;
   }
 
-  const buildApiEndpointFromRequest = (requestEndpoint: any, overrides = {} as ApiEndpointConstructorParams) =>
+  const buildApiEndpointFromRequest = (requestEndpoint: ApiEndpointOptions, overrides = {} as ApiEndpointOptions) =>
     new ApiEndpoint(
       {
         ...req.body,
@@ -61,14 +81,14 @@ router.post('/fetch', async (req, res, _next) => {
     );
 
   const apiEndpoints = incomingEndpoints?.map(
-    (requestEndpoint: any) => buildApiEndpointFromRequest(requestEndpoint)
+    (requestEndpoint) => buildApiEndpointFromRequest(requestEndpoint)
   ) ?? [];
 
   const apiEndpointsFromGroups = endpointGroups?.map(
-    (group: any) => group.endpoints.map(
-      (requestEndpoint: any) => buildApiEndpointFromRequest(requestEndpoint, { ...group, endpoints: undefined })
+    (group) => group.endpoints.map(
+      (requestEndpoint) => buildApiEndpointFromRequest(requestEndpoint, { ...group })
     )
-  ).reduce((acc: any, curr: any) => [...acc, ...curr], []) ?? [];
+  ).reduce((acc, curr) => [...acc, ...curr], []) ?? [];
 
   const apiEndpointsFromGroupsAndEndpoints = [...apiEndpoints, ...apiEndpointsFromGroups];
 

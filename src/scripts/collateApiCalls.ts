@@ -12,12 +12,6 @@ export default class ParallelApiCalls<T> {
         'Accept': 'application/json',
     };
 
-    /**
-     * This is a constructor function that takes an array of API endpoints and initializes an empty array
-     * for results.
-     * @param {{ url: string; transform: (data: any) => T }[]} apiEndpoints - An array of objects that
-     * contain two properties:
-     */
     constructor(
         apiEndpoints: ApiEndpoint[]
     ) {
