@@ -137,20 +137,6 @@ Endpoint groups are a way to group endpoints together and apply transformations 
                 },
                 {
                     "url": "https://api.chucknorris.io/jokes/random"
-                },
-                {
-                    "url": "https://uselessfacts.jsph.pl/random.json?language=en",
-                    "successKey": "text",
-                    "transform": [
-                        {
-                            "key": "type",
-                            "value": "fact"
-                        },
-                        {
-                            "key": "text",
-                            "valueKey": "text"
-                        }
-                    ]
                 }
             ]
         },
