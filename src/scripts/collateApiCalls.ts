@@ -58,8 +58,8 @@ export default class ParallelApiCalls<T> {
     }
 
     public getOnlyResultsData() {
-        return this.results.map((result) => result.data)
-            .filter((result) => !!result);
+        return this.getResults().map((result) => result.data)
+            .filter((result) => !!result).flat();
     }
 
     /**
