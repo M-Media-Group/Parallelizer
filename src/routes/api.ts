@@ -6,7 +6,7 @@ import dotNotationParser from '@/utils/dotNotationParser';
 const router = express.Router();
 const logger = getLogger('USER_ROUTE');
 
-const API_ENDPOINTS_LIMIT = 250;
+const API_ENDPOINTS_LIMIT = 500;
 
 /* POST users listing. */
 router.post('/fetch', async (req, res, _next) => {
@@ -37,7 +37,7 @@ router.post('/fetch', async (req, res, _next) => {
   }
 
   if (incomingData.length > API_ENDPOINTS_LIMIT) {
-    res.status(422).send({ error: 'Too many endpoints' });
+    res.status(422).send({ error: `Too many endpoints. Limited to ${API_ENDPOINTS_LIMIT}, got ${incomingData.length}` });
     return;
   }
 
