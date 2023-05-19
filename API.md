@@ -102,3 +102,82 @@ Each object in `transform` should contain the following fields:
 - value or valueKey: The new value to set for the key in the response data. Use value if the value should not be transformed (what you put in is what you get back), or use valueKey if the value should be transformed (what you put in value is a key from the API response).
 
 Note: if the transformation fails, it will fail silently and simply not transform the endpoint's data, instead, it will return the original response data.
+
+### Endpoint groups
+
+Endpoint groups are a way to group endpoints together and apply transformations to the entire group. This is useful if you want to retrieve data from multiple endpoints, but want to apply the same transformations to all of them. They take the same parameters as the main request, but with the addition of an `endpoints` parameter, which is an array of endpoint objects. See the example in the [Examples](#examples) section.
+
+## Examples
+
+### Using endpoint groups
+```
+{
+    "endpointGroups": [
+        {
+            "transform": [
+                {
+                    "key": "type",
+                    "value": "joke"
+                },
+                {
+                    "key": "text",
+                    "valueKey": "value"
+                }
+            ],
+            "successKey": "value",
+            "endpoints": [
+                {
+                    "url": "https://api.chucknorris.io/jokes/random",
+                },
+                {
+                    "url": "https://api.chucknorris.io/jokes/random",
+                },
+                {
+                    "url": "https://api.chucknorris.io/jokes/random",
+                },
+                {
+                    "url": "https://api.chucknorris.io/jokes/random",
+                },
+                {
+                    "url": "https://uselessfacts.jsph.pl/random.json?language=en",
+                    "successKey": "text",
+                    "transform": [
+                        {
+                            "key": "type",
+                            "value": "fact"
+                        },
+                        {
+                            "key": "text",
+                            "valueKey": "text"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "transform": [
+                {
+                    "key": "type",
+                    "value": "fact"
+                },
+                {
+                    "key": "text",
+                    "valueKey": "text"
+                }
+            ],
+            "successKey": "text",
+            "endpoints": [
+                {
+                    "url": "https://uselessfacts.jsph.pl/random.json?language=en",
+                },
+                {
+                    "url": "https://uselessfacts.jsph.pl/random.json?language=en",
+                },
+                {
+                    "url": "https://uselessfacts.jsph.pl/random.json?language=en",
+                }
+            ]
+        }
+    ]
+}
+```
