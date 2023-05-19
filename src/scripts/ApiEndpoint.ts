@@ -28,7 +28,7 @@ export interface ApiEndpointResponse {
 
 export default class ApiEndpoint {
     private fetchAttempts = 0;
-    private result = null as any;
+    private result = null as Record<string, any> | Record<string, any>[] | null;
     private errors = [] as ApiEndpointError[];
     private fetchedFromCache = false;
     private hasBeenTransformed = false;
@@ -49,6 +49,7 @@ export default class ApiEndpoint {
     transform = null as null | CallableFunction;
     failCritically = false;
     maxExecutionTime = 8000 as null | number;
+    dataKey = null as null | string;
     callback: (tries: number) => Promise<any>;
 
     constructor(
@@ -62,6 +63,7 @@ export default class ApiEndpoint {
         maxExecutionTime?: ApiEndpoint["maxExecutionTime"],
         maxRetries?: ApiEndpoint["maxRetries"],
         delay?: ApiEndpoint["delay"],
+        dataKey?: ApiEndpoint["dataKey"],
     ) {
         this.url = url;
         this.successKey = successKey || this.successKey;
@@ -72,6 +74,7 @@ export default class ApiEndpoint {
         this.maxExecutionTime = maxExecutionTime || this.maxExecutionTime;
         this.maxRetries = maxRetries || this.maxRetries;
         this.delay = delay || this.delay;
+        this.dataKey = dataKey || this.dataKey;
 
         this.callback = callback || this.defaultCallback;
     }
@@ -222,13 +225,24 @@ export default class ApiEndpoint {
             return this.getResultResponse();
         }
 
-        if (!(this.transform instanceof Function)) {
+        const transformer = this.transform;
+
+        if (!(transformer instanceof Function)) {
+            return this.getResultResponse();
+        }
+
+        // If the result is an array, we need to transform each item in the array
+        if (Array.isArray(this.result)) {
+            this.result = await Promise.all(this.result.map(async (item) => {
+                return await transformer(item);
+            }));
+            this.hasBeenTransformed = true;
             return this.getResultResponse();
         }
 
         this.transformationStartTime = Date.now();
         try {
-            this.result = await this.transform(this.result);
+            this.result = await transformer(this.result);
             this.hasBeenTransformed = true;
         } catch (error) {
             throw new Error(`Error transforming data from ${this.url}: ${error}`);
@@ -248,7 +262,7 @@ export default class ApiEndpoint {
    * @param {number} maxRetries - The maximum number of retries before rejecting the promise
    * @returns {Promise<*>}
    */
-    private async continouslyCallCallbackUntilItCompletes(callback: (tries: number) => any): Promise<any> {
+    private async continouslyCallCallbackUntilItCompletes(callback: (tries: number) => any): Promise<Record<string, any> | Record<string, any>[]> {
         let tries = 0;
 
         const startTime = Date.now();
@@ -278,6 +292,9 @@ export default class ApiEndpoint {
                     return { [this.successKey || 0]: false }
                 });
             if (data[this.successKey]) {
+                if (this.dataKey) {
+                    return data[this.dataKey];
+                }
                 return data;
             }
             if (tries >= this.maxRetries) {

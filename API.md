@@ -73,6 +73,7 @@ This endpoint is used to retrieve data from multiple endpoints by sending a POST
 | `maxExecutionTime` | number | No | The maximum time any single request should take or fail in miliseconds. |
 | `maxRetries` | number | No | The amount of times a request should be retried until it is considered as failed. |
 | `delay` | number | No | The time in miliseconds to wait between retries. |
+| `dataKey` | string | No | The key that contains the data. Further transformations by the transform parameter will be done on elements in this dataKey |
 | `transform` | array | No | An array of objects representing the transformations to apply to the response data. |
 
 Each object in `endpoints` should contain the following fields (fields here override the global fields defined in the request body):
@@ -87,6 +88,7 @@ Each object in `endpoints` should contain the following fields (fields here over
 | `maxExecutionTime` | number | No | The maximum time any single request should take or fail in miliseconds. |
 | `maxRetries` | number | No | The amount of times a request should be retried until it is considered as failed. |
 | `delay` | number | No | The time in miliseconds to wait between retries. |
+| `dataKey` | string | No | The key that contains the data. Further transformations by the transform parameter will be done on elements in this dataKey |
 | `transform` | array | No | An array of objects representing the transformations to apply to the response data. |
 
 Each object in `transform` should contain the following fields:

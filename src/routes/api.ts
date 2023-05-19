@@ -29,6 +29,7 @@ router.post('/fetch', async (req, res, _next) => {
   const globalMaxExecutionTime = Number(req.body.maxExecutionTime);
   const globalMaxRetries = Number(req.body.maxRetries);
   const globalDelay = Number(req.body.delay);
+  const globalDataKey = req.body.dataKey;
 
   // Validate incoming data
   if (!Array.isArray(incomingEndpoints)) {
@@ -71,6 +72,7 @@ router.post('/fetch', async (req, res, _next) => {
       requestEndpoint.maxExecutionTime ?? globalMaxExecutionTime,
       requestEndpoint.maxRetries ?? globalMaxRetries,
       requestEndpoint.delay ?? globalDelay,
+      requestEndpoint.dataKey ?? globalDataKey,
     );
 
   const apiEndpoints = incomingEndpoints.map(
