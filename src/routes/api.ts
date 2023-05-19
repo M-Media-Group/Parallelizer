@@ -52,6 +52,7 @@ router.post('/fetch', async (req, res, _next) => {
         headers: {
           ...req.headers,
           ...req.body.headers,
+          ...overrides.headers,
           ...requestEndpoint.headers,
           accept: 'application/json',
           'content-type': 'application/json',
