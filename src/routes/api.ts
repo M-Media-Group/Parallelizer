@@ -1,7 +1,7 @@
 import express from 'express';
 import { getLogger } from '@/utils/loggers';
 import ParallelApiCalls from '@/scripts/collateApiCalls';
-import ApiEndpoint from '@/scripts/ApiEndpoint';
+import ApiEndpoint, { ApiEndpointConstructorParams } from '@/scripts/ApiEndpoint';
 import dotNotationParser from '@/utils/dotNotationParser';
 const router = express.Router();
 const logger = getLogger('USER_ROUTE');
@@ -58,27 +58,22 @@ router.post('/fetch', async (req, res, _next) => {
   })
     .reduce((acc: any, curr: any) => ({ ...acc, ...curr }), {})
 
-  const applyAnyTransformation = (hotel: any) => {
-    if (hotel.transform || globalTransform) {
+  const applyAnyTransformation = (endpoint: ApiEndpoint) => {
+    if (endpoint.transform || globalTransform) {
       // Data here will come from the API response when the ApiEndpoint calls. This here is the callback function.
-      return (data: any) => applyTransformations(hotel.transform ?? globalTransform, data);
+      return (data: any) => applyTransformations(endpoint.transform ?? globalTransform, data);
     }
     return undefined;
   }
 
-  const buildApiEndpointFromRequest = (requestEndpoint: any) =>
+  const buildApiEndpointFromRequest = (requestEndpoint: any, overrides = {} as ApiEndpointConstructorParams) =>
     new ApiEndpoint(
-      requestEndpoint.url,
-      requestEndpoint.successKey ?? globalSuccessKey,
-      applyAnyTransformation(requestEndpoint),
-      requestEndpoint.headers ?? globalHeaders,
-      undefined, // This is the callback function, which is not needed here since we use the default one. Overriding it on the API level would be hard to implement.
-      requestEndpoint.method ?? globalMethod,
-      requestEndpoint.body ?? globalBody,
-      requestEndpoint.maxExecutionTime ?? globalMaxExecutionTime,
-      requestEndpoint.maxRetries ?? globalMaxRetries,
-      requestEndpoint.delay ?? globalDelay,
-      requestEndpoint.dataKey ?? globalDataKey,
+      {
+        ...req.body,
+        ...overrides,
+        ...requestEndpoint,
+        transform: applyAnyTransformation(requestEndpoint),
+      }
     );
 
   const apiEndpoints = incomingEndpoints.map(

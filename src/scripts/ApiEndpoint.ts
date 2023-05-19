@@ -26,6 +26,20 @@ export interface ApiEndpointResponse {
     }
 }
 
+export interface ApiEndpointConstructorParams {
+    url: ApiEndpoint["url"];
+    successKey?: ApiEndpoint["successKey"];
+    transform?: ApiEndpoint["transform"];
+    headers?: ApiEndpoint["headers"];
+    callback?: ApiEndpoint["callback"];
+    method?: ApiEndpoint["method"];
+    body?: ApiEndpoint["body"];
+    maxExecutionTime?: ApiEndpoint["maxExecutionTime"];
+    maxRetries?: ApiEndpoint["maxRetries"];
+    delay?: ApiEndpoint["delay"];
+    dataKey?: ApiEndpoint["dataKey"];
+}
+
 export default class ApiEndpoint {
     private fetchAttempts = 0;
     private result = null as Record<string, any> | Record<string, any>[] | null;
@@ -52,19 +66,7 @@ export default class ApiEndpoint {
     dataKey = null as null | string;
     callback: (tries: number) => Promise<any>;
 
-    constructor(
-        url: ApiEndpoint["url"],
-        successKey?: ApiEndpoint["successKey"],
-        transform?: ApiEndpoint["transform"],
-        headers?: ApiEndpoint["headers"],
-        callback?: ApiEndpoint["callback"],
-        method?: ApiEndpoint["method"],
-        body?: ApiEndpoint["body"],
-        maxExecutionTime?: ApiEndpoint["maxExecutionTime"],
-        maxRetries?: ApiEndpoint["maxRetries"],
-        delay?: ApiEndpoint["delay"],
-        dataKey?: ApiEndpoint["dataKey"],
-    ) {
+    constructor({ url, successKey, transform, headers, callback, method, body, maxExecutionTime, maxRetries, delay, dataKey }: ApiEndpointConstructorParams) {
         this.url = url;
         this.successKey = successKey || this.successKey;
         this.transform = transform || this.transform;
