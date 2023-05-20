@@ -116,7 +116,7 @@ The precedence of rules, in order from the most to least important, is as follow
 - Endpoint group rules
 - Global rules
 
-That means that if you have a global rule that sets the `successKey` to `success`, but an endpoint group rule that sets the `successKey` to `ok`, the `successKey` for that endpoint group will be `ok`. Similarly, if you have an endpoint specific rule that sets the `successKey` to `ok` but the endpoint itself has a `successKey` of `success`, the `successKey` for that one endpoint will be `success`.
+That means that if you have a global rule that sets the `successKey` to `success`, but an endpoint group rule that sets the `successKey` to `ok`, the `successKey` for that endpoint group will be `ok`. Similarly, if you have an endpoint-group specific rule that sets the `successKey` to `ok` but the endpoint itself has a `successKey` of `success`, the `successKey` for that one endpoint will be `success`.
 
 ## Examples
 
