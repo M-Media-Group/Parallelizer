@@ -6,24 +6,16 @@ import ApiEndpoint, { ApiEndpointResponse } from "./ApiEndpoint";
 export default class ParallelApiCalls<T> {
     private apiEndpoints: ApiEndpoint[];
     private results: ApiEndpointResponse[];
-    private errors: T[];
-    private globalHeaders: { [key: string]: string } = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-    };
 
     constructor(
         apiEndpoints: ApiEndpoint[]
     ) {
         this.apiEndpoints = apiEndpoints;
         this.results = [];
-        this.errors = [];
     }
-
 
     private reset() {
         this.results = [];
-        this.errors = [];
     }
 
     /**
@@ -122,12 +114,5 @@ export default class ParallelApiCalls<T> {
      */
     public getResults(): ApiEndpointResponse[] {
         return this.results;
-    }
-}
-
-class ErrorHandler extends Error {
-    constructor(message: string) {
-        super(message);
-        console.error(message);
     }
 }
