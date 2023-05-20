@@ -1,4 +1,4 @@
-# Live API Linker
+# Parallelizer
 
 ## Development
 Use the provided `devcontainer`.
