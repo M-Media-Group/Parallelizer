@@ -98,7 +98,7 @@ Each object in `transform` should contain the following fields:
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `key` | string | Yes | The key to modify in the response data. |
-| `value` or `valueKey` | string | Yes | The new value to set for the key in the response data. Use `valueKey` if the value should be taken directly from the response body, or `value` if the value should be a constant string. |
+| `value` or `valueKey` | string | Yes | The new value to set for the key in the response data. Use `valueKey` if the value should be taken directly from the response body, or `value` if the value should be a constant string. Dot notation is supported for deep retrieval using `valueKey` |
 
 - key: A string representing the key to modify in the response data.
 - value or valueKey: The new value to set for the key in the response data. Use value if the value should not be transformed (what you put in is what you get back), or use valueKey if the value should be transformed (what you put in value is a key from the API response).
