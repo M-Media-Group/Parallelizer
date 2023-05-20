@@ -109,6 +109,8 @@ Note: if the transformation fails, it will fail silently and simply not transfor
 
 Endpoint groups are a way to group endpoints together and apply transformations to the entire group. This is useful if you want to retrieve data from multiple endpoints, but want to apply the same transformations to all of them. They take the same parameters as the main request, but with the addition of an `endpoints` parameter, which is an array of endpoint objects. See the example in the [Examples](#examples) section.
 
+### Rule precedence
+
 The precedence of rules, in order from the most to least important, is as follows:
 - Endpoint specific rules
 - Endpoint group rules
