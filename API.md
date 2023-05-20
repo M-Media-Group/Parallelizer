@@ -78,7 +78,7 @@ This endpoint is used to retrieve data from multiple endpoints by sending a POST
 | `dataKey` | string | No | The key that contains the data. Further transformations by the transform parameter will be done on elements in this dataKey |
 | `transform` | array | No | An array of objects representing the transformations to apply to the response data. |
 
-Each object in `endpoints` should contain the following fields (fields here override the global fields defined in the request body):
+Each object in `endpoints` should contain the following fields (fields here override the global fields defined in the request body, or, if you're using them, the endpointGroups):
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
@@ -108,6 +108,13 @@ Note: if the transformation fails, it will fail silently and simply not transfor
 ### Endpoint groups
 
 Endpoint groups are a way to group endpoints together and apply transformations to the entire group. This is useful if you want to retrieve data from multiple endpoints, but want to apply the same transformations to all of them. They take the same parameters as the main request, but with the addition of an `endpoints` parameter, which is an array of endpoint objects. See the example in the [Examples](#examples) section.
+
+The precedence of rules, in order from the most to least important, is as follows:
+- Endpoint specific rules
+- Endpoint group rules
+- Global rules
+
+That means that if you have a global rule that sets the `successKey` to `success`, but an endpoint group rule that sets the `successKey` to `ok`, the `successKey` for that endpoint group will be `ok`. Similarly, if you have an endpoint specific rule that sets the `successKey` to `ok` but the endpoint itself has a `successKey` of `success`, the `successKey` for that one endpoint will be `success`.
 
 ## Examples
 
