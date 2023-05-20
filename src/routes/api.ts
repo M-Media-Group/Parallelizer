@@ -24,7 +24,8 @@ router.post('/fetch', async (req, res, _next) => {
 
   const incomingEndpoints = req.body.endpoints as ApiEndpointOptions[] | undefined;
   const endpointGroups = req.body.endpointGroups as EndpointGroup[] | undefined;
-  const totalNumberOfEndpoints = endpointGroups?.reduce((acc, curr) => acc + curr.endpoints.length, 0) ?? 0;
+  const totalNumberOfEndpointsInGroups = endpointGroups?.reduce((acc, curr) => acc + curr.endpoints.length, 0) ?? 0;
+  const totalNumberOfEndpoints = (incomingEndpoints?.length ?? 0) + totalNumberOfEndpointsInGroups;
 
   if (totalNumberOfEndpoints === 0) {
     res.status(422).send({ error: 'No endpoints. You must specify at least one endpoint' });
