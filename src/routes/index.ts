@@ -7,8 +7,8 @@ const logger = getLogger('INDEX_ROUTE');
 
 /* GET home page. */
 router.get('/', function (_req, res, _next) {
-  logger.info('hello ssExpress');
-  const path = __dirname + '/../../../API.md';
+  logger.info('Loading docs');
+  const path = __dirname + '/../../API.md';
   const file = fs.readFileSync(path, 'utf8');
   // Render the markdown file ../../API.md
   // res.send(marked(file.toString()));

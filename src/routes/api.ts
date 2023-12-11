@@ -1,8 +1,8 @@
 import express from 'express';
 import { getLogger } from '@/utils/loggers';
-import ParallelApiCalls from '@/scripts/collateApiCalls';
-import ApiEndpoint, { ApiEndpointConstructorParams } from '@/scripts/ApiEndpoint';
-import dotNotationParser from '@/utils/dotNotationParser';
+import ParallelApiCalls from 'parallel-api-calls/src/scripts/collateApiCalls';
+import ApiEndpoint, { ApiEndpointConstructorParams } from 'parallel-api-calls/src/scripts/ApiEndpoint';
+import { applyAnyTransformation } from 'parallel-api-calls/src/utils/transformer';
 const router = express.Router();
 const logger = getLogger('USER_ROUTE');
 
@@ -37,30 +37,6 @@ router.post('/fetch', async (req, res, _next) => {
     res.status(422).send({ error: `Too many endpoints. Limited to ${API_ENDPOINTS_LIMIT} at a time, got ${totalNumberOfEndpoints}` });
     console.timeEnd('parallel');
     return;
-  }
-
-  /**
-   *
-   * @param transformations
-   * @param incomingData This data is the response from the API call. This is the data that will be transformed.
-   * @returns
-   */
-  const applyTransformations = (transformations: ApiEndpointOptions["transform"], incomingData: any) => transformations?.map((transform) => {
-    return { [transform.key]: transform.value ?? dotNotationParser(incomingData, transform.valueKey) };
-  })
-    .reduce((acc, curr) => ({ ...acc, ...curr }), {})
-
-  /**
-   *
-   * @param transform The transformation object that will be used in the transform method
-   * @returns
-   */
-  const applyAnyTransformation = (transform: ApiEndpointOptions["transform"]) => {
-    if (transform || req.body.transform) {
-      // Data here will come from the API response when the ApiEndpoint calls. This here is the callback function.
-      return (data: any) => applyTransformations(transform ?? req.body.transform, data);
-    }
-    return undefined;
   }
 
   const buildApiEndpointFromRequest = (requestEndpoint: ApiEndpointOptions, overrides = {} as ApiEndpointOptions) =>

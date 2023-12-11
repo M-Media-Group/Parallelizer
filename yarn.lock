@@ -993,6 +993,11 @@ optimist@~0.3.5:
   dependencies:
     wordwrap "~0.0.2"
 
+parallel-api-calls@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/parallel-api-calls/-/parallel-api-calls-0.0.2.tgz#cfbfc9c8bf1e797152a54fdcba9892da642c913c"
+  integrity sha512-TyetT44qlARa5BUkiBjo2ZDlgfPpcn1bmiJ6aBdi2vJrCb8wcK+LCrbXeUae2s1O0LSBnVhKnTmRdwiHBqDG6Q==
+
 parseurl@~1.3.2:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.3.tgz#9da19e7bee8d12dff0513ed5b76957793bc2e8d4"
